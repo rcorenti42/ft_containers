@@ -6,22 +6,11 @@
 /*   '| \'\_'\_/'| \'\_ |'\|  |  _|_,             /(_ o _)|      _.-'_.-'     */
 /*    '  `  `'   '  `  `'  `  ' '                / /(_,_)||_   _/_  .'        */
 /*                                              /  `-----' || ( ' )(__..--.   */
-/*   Created: 2022/07/23 12:55:07               `-------|||-'(_{;}_)      |   */
+/*   Created: 2022/07/24 18:11:12               `-------|||-'(_{;}_)      |   */
 /*                                                      '-'   (_,_)-------'   */
-/*   vector.hpp                                                               */
+/*   main.cpp                                                                 */
 /* ************************************************************************** */
 
-#ifndef VECTOR_HPP
-# define VECTOR_HPP
-
-# include "ft_iterator_base_types.hpp"
-# include "ft_iterator.hpp"
-
-namespace ft {
-    template <typename T, typename Alloc = std::allocator<T>>
-    class vector {
-        public:
-    };
+int main () {
+  return 0;
 }
-
-#endif

@@ -249,6 +249,24 @@ namespace ft {
     template <typename T>
     struct  is_integral: public is_integral_helper<T> {
     };
+
+    template <bool Cond, typename T = void, typename F = void>
+    struct  conditional_helper {
+    };
+
+    template <typename T, typename F>
+    struct  conditional_helper<true, T, F> {
+        typedef T type;
+    };
+
+    template <typename T, typename F>
+    struct  conditional_helper<false, T, F> {
+        typedef F type;
+    };
+
+    template <bool Cond, typename T, typename F>
+    struct  conditional: public conditional_helper<Cond, T, F> {
+    };
 }
 
 #endif
