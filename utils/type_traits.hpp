@@ -34,6 +34,14 @@ namespace ft {
     typedef integral_constant<bool, true> true_type;
     typedef integral_constant<bool, false> false_type;
 
+    template <typename, typename>
+    struct  is_same: false_type {
+    };
+
+    template <typename T>
+    struct  is_same<T, T>: true_type {
+    };
+
     template <typename T>
     struct  is_integral_helper: public false_type {
     };
