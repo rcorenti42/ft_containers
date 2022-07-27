@@ -15,6 +15,7 @@
 # define FT_ITERATOR_BASE_TYPES_HPP
 
 # include <cstddef>
+#include <iterator>
 
 namespace ft {
 	class	input_iterator_tag {};
@@ -43,7 +44,7 @@ namespace ft {
 
 	template <class T>
 	struct	iterator_traits<T*> {
-		typedef random_access_iterator_tag iterator_category;
+		typedef typename std::random_access_iterator_tag iterator_category;
 		typedef T value_type;
 		typedef ptrdiff_t difference_type;
 		typedef T* pointer;
@@ -52,7 +53,7 @@ namespace ft {
 
 	template <class T>
 	struct	iterator_traits<const T*> {
-		typedef random_access_iterator_tag iterator_category;
+		typedef typename std::random_access_iterator_tag iterator_category;
 		typedef T value_type;
 		typedef ptrdiff_t difference_type;
 		typedef const T* pointer;

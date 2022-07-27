@@ -55,6 +55,19 @@ namespace ft {
                     this->_alloc.destroy(&this->_data[i]);
                 this->_alloc.deallocate(this->_data, this->_capacity);
             }
+            vector&                 operator=(const vector& x) {
+                if (this != &x) {
+                    for (size_type i = 0; i < this->_size; i++)
+                        this->_alloc.destroy(&this->_data[i]);
+                    this->_alloc.deallocate(this->_data, this->_capacity);
+                    this->_size = x._size;
+                    this->_capacity = x._capacity;
+                    this->_data = this->_alloc.allocate(this->_capacity);
+                    for (size_type i = 0; i < this->_size; i++)
+                        this->_alloc.construct(&this->_data[i], x._data[i]);
+                }
+                return *this;
+            }
             iterator                begin() {
                 return iterator(this->_data);
             }
@@ -96,6 +109,13 @@ namespace ft {
             }
             size_type               max_size() const {
                 return this->_alloc.max_size();
+            }
+            void                    resize(size_type n, value_type val = value_type()) {
+                reserve(n);
+                for (; n < this->_size; this->_size--)
+                    pop_back();
+                for (; n > this->_size; this->_size++)
+                    push_back(val);
             }
             size_type               capacity() const {
                 return this->_capacity;
