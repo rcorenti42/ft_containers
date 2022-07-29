@@ -24,5 +24,5 @@ int main ()
     foo = ft::vector<int>();
     std::cout << "Size of foo: " << int(foo.size()) << std::endl;
     std::cout << "Size of bar: " << int(bar.size()) << std::endl;
-    return 0;
+	return (0);
 }

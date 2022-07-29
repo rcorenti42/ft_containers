@@ -17,6 +17,9 @@
 # include "ft_iterator_base_types.hpp"
 # include "type_traits.hpp"
 
+
+# include <iterator>
+
 namespace ft {
     template <typename Iterator>
     class reverse_iterator: public iterator<typename iterator_traits<Iterator>::iterator_category, typename iterator_traits<Iterator>::value_type, typename iterator_traits<Iterator>::difference_type, typename iterator_traits<Iterator>::pointer, typename iterator_traits<Iterator>::reference> {
@@ -113,22 +116,21 @@ namespace ft {
         return rhs.base() - lhs.base();
     };
 
-    template <typename Iterator, typename Container>
+    template <typename Iterator, bool Constant>
     class   vector_iterator {
         public:
-            typedef Iterator iterator_type;
-            typedef typename iterator_traits<Iterator>::iterator_category iterator_category;
-            typedef typename iterator_traits<Iterator>::value_type value_type;
-            typedef typename iterator_traits<Iterator>::difference_type difference_type;
-            typedef typename iterator_traits<Iterator>::pointer pointer;
-            typedef typename iterator_traits<Iterator>::reference reference;
-            vector_iterator(): current(iterator_type()) {
+            typedef ptrdiff_t difference_type;
+			typedef std::random_access_iterator_tag iterator_category;
+			typedef typename conditional<Constant, const Iterator, Iterator>::type value_type;
+			typedef value_type* pointer;
+			typedef value_type& reference;
+            vector_iterator(): current(Iterator()) {
             }
-            explicit vector_iterator(const iterator_type& it): current(it) {
+            vector_iterator(const Iterator* it): current(it) {
             }
-            template <typename Iter>
-            vector_iterator(const vector_iterator<Iter, typename enable_if<(is_same<Iter, typename Container::pointer>::value), Container>::type>& it) : current(it.base()) {
-            }
+            template <bool Const>
+			vector_iterator(const vector_iterator<Iterator, Const>& it, typename enable_if<!Const>::type* = 0): current(it.base()) {
+			}
             reference                                               operator*() const {
                 return *this->current;
             }
@@ -170,44 +172,46 @@ namespace ft {
             reference                                               operator[](difference_type n) const {
                 return *(this->current + n);
             }
-            const iterator_type&                                    base() const {
+			bool                                                   	operator==(const vector_iterator<Iterator, Constant>& lhs) const {
+        		return this->current == lhs.current;
+    		}
+			bool                                            		operator==(value_type* lhs) const {
+				return this->current == lhs;
+			}
+            const Iterator&                                    base() const {
                 return this->current;
             }
             protected:
-            iterator_type                                           current;
+            Iterator                                           current;
     };
-    template <typename Iterator, typename Container>
-    bool                                                            operator==(const vector_iterator<Iterator, Container>& lhs, const vector_iterator<Iterator, Container>& rhs) {
-        return lhs.base() == rhs.base();
-    };
-    template <typename Iterator, typename Container>
-    bool                                                            operator!=(const vector_iterator<Iterator, Container>& lhs, const vector_iterator<Iterator, Container>& rhs) {
-        return !(lhs == rhs);
-    };
-    template <typename Iterator, typename Container>
-    bool                                                            operator<(const vector_iterator<Iterator, Container>& lhs, const vector_iterator<Iterator, Container>& rhs) {
+    template <typename Iterator, bool Constant>
+    bool                                                            operator<(const vector_iterator<Iterator, Constant>& lhs, const vector_iterator<Iterator, Constant>& rhs) {
         return rhs.base() < lhs.base();
     };
-    template <typename Iterator, typename Container>
-    bool                                                            operator<=(const vector_iterator<Iterator, Container>& lhs, const vector_iterator<Iterator, Container>& rhs) {
+    template <typename Iterator, bool Constant>
+    bool                                                            operator<=(const vector_iterator<Iterator, Constant>& lhs, const vector_iterator<Iterator, Constant>& rhs) {
         return rhs.base() <= lhs.base();
     };
-    template <typename Iterator, typename Container>
-    bool                                                            operator>(const vector_iterator<Iterator, Container>& lhs, const vector_iterator<Iterator, Container>& rhs) {
+    template <typename Iterator, bool Constant>
+    bool                                                            operator>(const vector_iterator<Iterator, Constant>& lhs, const vector_iterator<Iterator, Constant>& rhs) {
         return rhs.base() > lhs.base();
     };
-    template <typename Iterator, typename Container>
-    bool                                                            operator>=(const vector_iterator<Iterator, Container>& lhs, const vector_iterator<Iterator, Container>& rhs) {
+    template <typename Iterator, bool Constant>
+    bool                                                            operator>=(const vector_iterator<Iterator, Constant>& lhs, const vector_iterator<Iterator, Constant>& rhs) {
         return rhs.base() >= lhs.base();
     };
-    template <typename Iterator, typename Container>
-    vector_iterator<Iterator, Container>                            operator+(typename vector_iterator<Iterator, Container>::difference_type n, const vector_iterator<Iterator, Container>& vec_it) {
-        return vector_iterator<Iterator, Container>(vec_it.base() + n);
+    template <typename Iterator, bool Constant>
+    vector_iterator<Iterator, Constant>                            operator+(typename vector_iterator<Iterator, Constant>::difference_type n, const vector_iterator<Iterator, Constant>& vec_it) {
+        return vector_iterator<Iterator, Constant>(vec_it.base() + n);
     };
-    template <typename Iterator, typename Container>
-    typename vector_iterator<Iterator, Container>::difference_type  operator-(const vector_iterator<Iterator, Container>& lhs, const vector_iterator<Iterator, Container>& rhs) {
+    template <typename Iterator, bool Constant>
+    typename vector_iterator<Iterator, Constant>::difference_type  operator-(const vector_iterator<Iterator, Constant>& lhs, const vector_iterator<Iterator, Constant>& rhs) {
         return rhs.base() - lhs.base();
     };
+	template <typename Iterator, bool Constant>
+	bool                                                   			operator!=(const vector_iterator<Iterator, Constant>& lhs, const vector_iterator<Iterator, Constant>& rhs) {
+		return lhs.base() != rhs.base();
+	};
 }
 
 #endif
