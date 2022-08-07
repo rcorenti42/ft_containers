@@ -124,9 +124,9 @@ namespace ft {
 			typedef typename conditional<Constant, const Iterator, Iterator>::type value_type;
 			typedef value_type* pointer;
 			typedef value_type& reference;
-            vector_iterator(): current(Iterator()) {
+            vector_iterator(): current(NULL) {
             }
-            vector_iterator(const Iterator* it): current(it) {
+            vector_iterator(Iterator* it): current(it) {
             }
             template <bool Const>
 			vector_iterator(const vector_iterator<Iterator, Const>& it, typename enable_if<!Const>::type* = 0): current(it.base()) {
@@ -156,10 +156,13 @@ namespace ft {
                 return tmp;
             }
             vector_iterator                                         operator+(difference_type n) const {
-                return vector_iterator(this->current + n);
+                return this->current + n;
             }
             vector_iterator                                         operator-(difference_type n) const {
-                return vector_iterator(this->current - n);
+                return this->current - n;
+            }
+            difference_type                                         operator-(const vector_iterator& rhs) const {
+                return this->current - rhs.current;
             }
             vector_iterator&                                        operator+=(difference_type n) {
                 this->current += n;
@@ -178,12 +181,19 @@ namespace ft {
 			bool                                            		operator==(value_type* lhs) const {
 				return this->current == lhs;
 			}
-            const Iterator&                                    base() const {
+            bool                                            		operator!=(const vector_iterator<Iterator, Constant>& lhs) const {
+                return this->current != lhs.current;
+            }
+            Iterator*                                               base() const {
                 return this->current;
             }
-            protected:
-            Iterator                                           current;
+        protected:
+            Iterator                                           *current;
     };
+    template <typename Iterator, bool Constant>
+    bool                                                            operator+(typename vector_iterator<Iterator, Constant>::difference_type n, const vector_iterator<Iterator, Constant>& rhs) {
+        return rhs.base() + n;
+    }
     template <typename Iterator, bool Constant>
     bool                                                            operator<(const vector_iterator<Iterator, Constant>& lhs, const vector_iterator<Iterator, Constant>& rhs) {
         return rhs.base() < lhs.base();
@@ -200,18 +210,6 @@ namespace ft {
     bool                                                            operator>=(const vector_iterator<Iterator, Constant>& lhs, const vector_iterator<Iterator, Constant>& rhs) {
         return rhs.base() >= lhs.base();
     };
-    template <typename Iterator, bool Constant>
-    vector_iterator<Iterator, Constant>                            operator+(typename vector_iterator<Iterator, Constant>::difference_type n, const vector_iterator<Iterator, Constant>& vec_it) {
-        return vector_iterator<Iterator, Constant>(vec_it.base() + n);
-    };
-    template <typename Iterator, bool Constant>
-    typename vector_iterator<Iterator, Constant>::difference_type  operator-(const vector_iterator<Iterator, Constant>& lhs, const vector_iterator<Iterator, Constant>& rhs) {
-        return rhs.base() - lhs.base();
-    };
-	template <typename Iterator, bool Constant>
-	bool                                                   			operator!=(const vector_iterator<Iterator, Constant>& lhs, const vector_iterator<Iterator, Constant>& rhs) {
-		return lhs.base() != rhs.base();
-	};
 }
 
 #endif

@@ -175,6 +175,9 @@ namespace ft {
             value_type              *data() {
                 return this->_data;
             }
+            const value_type        *data() const {
+                return this->_data;
+            }
             template <typename InputIterator>
             void                    assign(InputIterator first, InputIterator last, typename enable_if<!is_integral<InputIterator>::value>::type* = 0) {
                 clear();
@@ -222,23 +225,17 @@ namespace ft {
                     tmp = this->_alloc.allocate(this->_size * 2);
                 else
                     tmp = this->_alloc.allocate(this->_capacity);
-                iterator it = begin();
                 size_type i = 0;
                 size_type j = 0;
-                while (it != end()) {
+                for (iterator it = begin(); it != end(); it++) {
                     if (it == pos) {
                         j = i;
-                        this->_alloc.construct(&tmp[i], val);
-                        i++;
+                        this->_alloc.construct(&tmp[i++], val);
                     }
-                    this->_alloc.construct(&tmp[i], *it);
-                    i++;
-                    it++;
                 }
                 if (pos == end()) {
                     j = i;
-                    this->_alloc.construct(&tmp[i], val);
-                    i++;
+                    this->_alloc.construct(&tmp[i++], val);
                 }
                 for (size_type k = 0; k < this->_size; k++)
                     this->_alloc.destroy(&this->_data[k]);
@@ -249,7 +246,7 @@ namespace ft {
                 else if ((this->_size + 1) > this->_capacity && this->_capacity > 0)
                     this->_capacity = this->_size * 2;
                 _size = i;
-                return iterator(&this->_data[j]);
+                return &tmp[j];
             }
             void                    insert(iterator pos, size_type n, const value_type& val) {
                     pointer tmp;
@@ -259,22 +256,16 @@ namespace ft {
                         tmp = this->_alloc.allocate(this->_size * 2);
                     else
                         tmp = this->_alloc.allocate(this->_capacity);
-                    iterator it = begin();
                     size_type i = 0;
-                    while (it != end()) {
-                        if (it == pos) {
+                    for (iterator it = begin(); it != end(); it++) {
+                        if (it == pos)
                             for (size_type j = 0; j < n; j++)
-                                this->_alloc.construct(&tmp[i + j], val);
-                            i++;
-                        }
-                        this->_alloc.construct(&tmp[i], *it);
-                        i++;
-                        it++;
+                                this->_alloc.construct(&tmp[i++], val);
+                        this->_alloc.construct(&tmp[i++], *it);
                     }
-                    if (pos == end()) {
+                    if (pos == end())
                         for (size_type j = 0; j < n; j++)
                             this->_alloc.construct(&tmp[i++], val);
-                    }
                     for (size_type j = 0; j < this->_size; j++)
                         this->_alloc.destroy(&this->_data[j]);
                     this->_alloc.deallocate(this->_data, this->_capacity);
@@ -297,17 +288,16 @@ namespace ft {
                     tmp = this->_alloc.allocate(this->_size * 2);
                 else
                     tmp = this->_alloc.allocate(this->_capacity);
-                iterator it = begin();
                 size_type i = 0;
-                for (; it != end(); it++) {
+                for (iterator it = begin(); it != end(); it++) {
                     if (it == pos)
                         for (InputIterator it2 = first; it2 != last; it2++)
                             this->_alloc.construct(&tmp[i++], *it2);
-                    i++;   
+                    this->_alloc.construct(&tmp[i++], *it);
                 }
                 if (pos == end())
-                    for (InputIterator it2 = first; it2 != last; it2++)
-                        this->_alloc.construct(&tmp[i++], *it2);
+                    for (InputIterator it = first; it != last; it++)
+                        this->_alloc.construct(&tmp[i++], *it);
                 for (size_type i = 0; i < this->_size; i++)
                     this->_alloc.destroy(&this->_data[i]);
                 this->_alloc.deallocate(this->_data, this->_capacity);
@@ -359,7 +349,7 @@ namespace ft {
             return false;
 		const T* lhs_data = lhs.data();
 		const T* rhs_data = rhs.data();
-        for (typename Alloc::size_type i = 0; i < lhs.size(); i++)
+        for (size_t i = 0; i < lhs.size(); i++)
             if (lhs_data[i] != rhs_data[i])
                 return false;
         return true;
