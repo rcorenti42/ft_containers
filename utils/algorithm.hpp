@@ -29,12 +29,12 @@ namespace ft {
     template <typename InputIterator1, typename InputIterator2, typename BinaryPredicate>
     bool    equal(InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, BinaryPredicate pred) {
         while (first1 != last1) {
-            if (!pred(*first1, *first2))
+            if (first2 == pred || *first2 != *first1)
                 return false;
             first1++;
             first2++;
         }
-        return true;
+        return first2 == pred;
     };
 
     template <typename InputIterator1, typename InputIterator2>

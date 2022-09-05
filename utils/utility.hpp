@@ -29,8 +29,8 @@ namespace ft {
         pair(const T1 &a, const T2 &b): first(a), second(b) {
         }
         pair&   operator=(const pair &pr) {
-            first = pr.first;
-            second = pr.second;
+            this->first = pr.first;
+            this->second = pr.second;
             return *this;
         }
     };

@@ -14,20 +14,19 @@
 #ifndef FT_ITERATOR_HPP
 # define FT_ITERATOR_HPP
 
-# include "ft_iterator_base_types.hpp"
 # include "type_traits.hpp"
-# include <iterator>
+# include "ft_iterator_base_types.hpp"
 
 namespace ft {
     template <class Iterator>
 	class reverse_iterator {
 	    public:
             typedef Iterator iterator_type;
-            typedef typename iterator_traits<iterator_type>::iterator_category iterator_category;
-            typedef typename iterator_traits<iterator_type>::value_type value_type;
-            typedef typename iterator_traits<iterator_type>::difference_type difference_type;
-            typedef typename iterator_traits<iterator_type>::pointer pointer;
-            typedef typename iterator_traits<iterator_type>::reference reference;
+            typedef random_access_iterator_tag iterator_category;
+            typedef typename Iterator::value_type value_type;
+            typedef ptrdiff_t difference_type;
+            typedef value_type* pointer;
+            typedef value_type& reference;
 	    	reverse_iterator(): current() {
             }
 	    	reverse_iterator(iterator_type x): current(--x) {
@@ -76,6 +75,9 @@ namespace ft {
 	    	reverse_iterator operator-(difference_type n) const {
 	    		return this->current + n + 1;
 	    	}
+            difference_type operator-(const reverse_iterator& rhs) const {
+                return rhs.current - this->current;
+	    	}
 	    	reverse_iterator&   operator+=(difference_type n) {
         		this->current -= n;
         		return *this;
@@ -83,9 +85,6 @@ namespace ft {
 	    	reverse_iterator&  operator-=(difference_type n) {
         		this->current += n;
         		return *this;
-	    	}
-            difference_type operator-(const reverse_iterator& rhs) {
-                return rhs.current - this->current;
 	    	}
         protected:
             Iterator   current;
