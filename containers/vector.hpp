@@ -36,45 +36,44 @@ namespace ft {
            typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
            typedef ptrdiff_t difference_type;
            typedef size_t size_type;
-           explicit vector(const allocator_type& alloc = allocator_type()): _alloc(alloc), _size(0), _capacity(0), _data(_alloc.allocate(0)) {
+           vector(): _alloc(Alloc()), _size(0), _capacity(0), _data(NULL) {
+           }
+           explicit vector(const allocator_type& alloc): _alloc(alloc), _size(0), _capacity(0), _data(_alloc.allocate(0)) {
            }
            explicit vector(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()): _alloc(alloc), _size(n), _capacity(n), _data(_alloc.allocate(n)) {
-               this->_data = this->_alloc.allocate(this->_capacity);
 				for (size_type i = 0; i < n; i++)
                    this->_alloc.construct(&this->_data[i], val);
            }
-           template <typename InputIterator>
+           template<typename InputIterator>
            vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(), typename enable_if<!is_integral<InputIterator>::value >::type* = 0): _alloc(alloc), _size(0), _capacity(0), _data(_alloc.allocate(0)) {
-               size_type n = 0;
-				for (InputIterator it = first; it != last && n < this->max_size(); it++)
-					n++;
-				this->_capacity = n;
-				this->_data = this->_alloc.allocate(n);
-				for (size_type i = 0; i < n; i++)
-					this->_alloc.construct(&this->_data[i], *first++);
-				this->_size = n;
+                while (first != last) {
+                    insert(end(), *first);
+                    first++;
+                }
            }
            vector(const vector& x): _alloc(x._alloc), _size(x._size), _capacity(x._capacity), _data(_alloc.allocate(x._capacity)) {
                for (size_type i = 0; i < _size; i++)
                    this->_alloc.construct(&this->_data[i], x[i]);
            }
            ~vector() {
-               for (size_type i = 0; i < this->_size; i++)
-                   this->_alloc.destroy(&this->_data[i]);
-               this->_alloc.deallocate(this->_data, this->_capacity);
+                clear();
+                this->_alloc.deallocate(this->_data, this->_capacity);
            }
            vector&                 operator=(const vector& x) {
-               if (this != &x) {
-                   for (size_type i = 0; i < this->_size; i++)
-                       this->_alloc.destroy(&this->_data[i]);
-                   this->_alloc.deallocate(this->_data, this->_capacity);
-                   this->_size = x._size;
-                   this->_capacity = x._capacity;
-                   this->_data = this->_alloc.allocate(this->_capacity);
-                   for (size_type i = 0; i < this->_size; i++)
-                       this->_alloc.construct(&this->_data[i], x._data[i]);
-               }
-               return *this;
+                if (this != &x) {
+                    for (size_type i = 0; i < this->_size; i++)
+                        this->_alloc.destroy(&this->_data[i]);
+                    this->_alloc = x._alloc;
+                    this->_size = x._size;
+                    if (x._size > this->_capacity) {
+                        this->_alloc.deallocate(this->_data, this->_capacity);
+                        this->_data = this->_alloc.allocate(x._size);
+                        this->_capacity = x._size;
+                    }
+                    for (size_type i = 0; i < this->_size; i++)
+                        this->_alloc.construct(&this->_data[i], x[i]);
+                }
+                return *this;
            }
            iterator                begin() {
                return iterator(this->_data);
@@ -119,17 +118,17 @@ namespace ft {
                return this->_alloc.max_size();
            }
            void                    resize(size_type n, value_type val = value_type()) {
-               reserve(n);
-               while (n < this->_size)
-                   pop_back();
-               while (n > this->_size)
-                   push_back(val);
+                reserve(n);
+                while (n < this->_size)
+                    pop_back();
+                while (n > this->_size)
+                    push_back(val);
            }
            size_type               capacity() const {
                return this->_capacity;
            }
            bool                    empty() const {
-               return this->_size == 0;
+               return !this->_size;
            }
            void                    reserve(size_type n) {
                if (n > max_size())

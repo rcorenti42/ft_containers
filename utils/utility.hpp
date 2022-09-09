@@ -14,13 +14,15 @@
 #ifndef UTILITY_HPP
 # define UTILITY_HPP
 
+#include "type_traits.hpp"
+
 namespace ft {
     template <typename T1, typename T2>
-    struct  pair {
-        T1  first;
-        T2  second;
-        typedef T1 first_type;
-        typedef T2 second_type;
+    struct pair {
+        typedef typename no_const<T1>::new_type first_type;
+        typedef typename no_const<T2>::new_type second_type;
+        first_type  first;
+        second_type second;
         pair(): first(), second() {
         }
         template <typename U, typename V>

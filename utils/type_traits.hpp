@@ -22,12 +22,22 @@ namespace ft {
     struct  enable_if<true, T> {
         typedef T type;
     };
-
+    template <class T>
+    struct  no_const {
+        typedef T new_type;
+    };
+    template <class T>
+    struct  no_const<const T> {
+        typedef T new_type;
+    };
     template <typename T, T v>
     struct  integral_constant {
         static const T    value = v;
         typedef T value_type;
         typedef integral_constant<T, v> type;
+        operator value_type() const {
+            return value;
+        }
     };
 
 	struct true_type: public integral_constant<bool, true> {
