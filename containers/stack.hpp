@@ -25,52 +25,52 @@ namespace ft {
             typedef typename container_type::size_type size_type;
             typedef typename container_type::reference reference;
             typedef typename container_type::const_reference const_reference;
-            explicit stack(const Container& ctnr = Container()): _container(ctnr) {
+            explicit stack(const Container& ctnr = Container()): c(ctnr) {
             }
-            stack(const stack& other): _container(other._container) {
+            stack(const stack& other): c(other.c) {
             }
             stack&              operator=(const stack& other) {
-                this->_container = other._container;
+                this->c = other.c;
                 return *this;
             }
             value_type&         top() {
-                return this->_container.back();
+                return this->c.back();
             }
             const value_type&   top() const {
-                return this->_container.back();
+                return this->c.back();
             }
             bool                empty() const {
-                return this->_container.empty();
+                return this->c.empty();
             }
             size_type           size() const {
-                return this->_container.size();
+                return this->c.size();
             }
             void                push(const value_type& val) {
-                this->_container.push_back(val);
+                this->c.push_back(val);
             }
             void                pop() {
-                this->_container.pop_back();
+                this->c.pop_back();
             }
             friend bool         operator==(const stack<T, Container>& lhs, const stack<T, Container>& rhs) {
-                return lhs._container == rhs._container;
+                return lhs.c == rhs.c;
             };
             friend bool         operator!=(const stack<T, Container>& lhs, const stack<T, Container>& rhs) {
-                return lhs._container != rhs._container;
+                return lhs.c != rhs.c;
             };
             friend bool         operator<(const stack<T, Container>& lhs, const stack<T, Container>& rhs) {
-                return lhs._container < rhs._container;
+                return lhs.c < rhs.c;
             };
             friend bool         operator<=(const stack<T, Container>& lhs, const stack<T, Container>& rhs) {
-                return lhs._container <= rhs._container;
+                return lhs.c <= rhs.c;
             };
             friend bool         operator>(const stack<T, Container>& lhs, const stack<T, Container>& rhs) {
-                return lhs._container > rhs._container;
+                return lhs.c > rhs.c;
             };
             friend bool         operator>=(const stack<T, Container>& lhs, const stack<T, Container>& rhs) {
-                return lhs._container >= rhs._container;
+                return lhs.c >= rhs.c;
             };
-        private:
-            container_type      _container;
+        protected:
+            container_type      c;
     };
 }
 
